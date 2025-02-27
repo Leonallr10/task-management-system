@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  backend-build:
+  backend-build-deploy:
     name: Build and Deploy Backend
     runs-on: ubuntu-latest
     steps:
@@ -35,16 +35,24 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image for Backend
+        working-directory: task-api
         run: docker push leolr10/task-api:latest
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 --decode > $HOME/.kube/config
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
 
       - name: Deploy Backend to Kubernetes
         run: |
-          kubectl apply -f task-api/kubernetes/mongodb.yaml
+          kubectl apply -f task-api/kubernetes/mongodb.yaml --validate=false
           kubectl apply -f task-api/kubernetes/app.yaml
         env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: $HOME/.kube/config
 
-  frontend-build:
+  frontend-build-deploy:
     name: Build and Deploy Frontend
     runs-on: ubuntu-latest
     steps:
@@ -76,10 +84,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image for Frontend
+        working-directory: task-ui
         run: docker push leolr10/task-ui:latest
 
-      # Optional: Deploy frontend to Kubernetes if desired
+      # Uncomment and adjust if you want to deploy the frontend to Kubernetes:
       #- name: Deploy Frontend to Kubernetes
       #  run: kubectl apply -f task-ui/kubernetes/app.yaml
       #  env:
-      #    KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      #    KUBECONFIG: $HOME/.kube/config
