@@ -52,6 +52,7 @@ jobs:
         env:
           KUBECONFIG: $HOME/.kube/config
 
+
   frontend-build-deploy:
     name: Build and Deploy Frontend
     runs-on: ubuntu-latest
