@@ -78,7 +78,7 @@ jobs:
       - name: Push Docker Image for Frontend
         run: docker push leolr10/task-ui:latest
 
-      # If you have Kubernetes manifests for frontend deployment, uncomment the lines below:
+      # Optional: Deploy frontend to Kubernetes if you have a manifest for it
       #- name: Deploy Frontend to Kubernetes
       #  run: kubectl apply -f task-ui/kubernetes/app.yaml
       #  env:
