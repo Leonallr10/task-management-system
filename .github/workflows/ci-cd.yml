@@ -42,7 +42,7 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
 
-      - name: Verify KUBECONFIG Setup
+      - name: Verify KUBECONFIG Setup (optional)
         run: head -n 10 $HOME/.kube/config
 
       - name: Deploy Backend to Kubernetes
