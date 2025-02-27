@@ -42,8 +42,14 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_B64 }}" | base64 --decode > $HOME/.kube/config
+          cat $HOME/.kube/config  # (Optional) For debugging, remove in production
         env:
           KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+
+      - name: Verify Kubeconfig
+        run: kubectl cluster-info
+        env:
+          KUBECONFIG: $HOME/.kube/config
 
       - name: Deploy MongoDB to Kubernetes
         run: kubectl apply -f task-api/kubernetes/mongodb.yaml --validate=false
@@ -91,8 +97,8 @@ jobs:
         working-directory: task-ui
         run: docker push leolr10/task-ui:latest
 
-      # Optionally, if you deploy the frontend via Kubernetes, uncomment and adjust the next step:
-      #- name: Deploy Frontend to Kubernetes
-      #  run: kubectl apply -f task-ui/kubernetes/app.yaml
-      #  env:
-      #    KUBECONFIG: $HOME/.kube/config
+      # Optional: Deploy frontend to Kubernetes if desired
+      # - name: Deploy Frontend to Kubernetes
+      #   run: kubectl apply -f task-ui/kubernetes/app.yaml
+      #   env:
+      #     KUBECONFIG: $HOME/.kube/config
