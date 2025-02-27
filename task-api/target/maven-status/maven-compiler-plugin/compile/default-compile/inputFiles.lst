@@ -1,0 +1,7 @@
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\config\CorsConfig.java
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\controller\TaskController.java
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\model\Task.java
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\model\TaskExecution.java
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\repository\TaskRepository.java
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\service\KubernetesService.java
+E:\kaiburr\task-api\src\main\java\com\example\taskapi\TaskApiApplication.java
