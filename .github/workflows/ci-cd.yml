@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  backend-deploy:
+  backend-build:
     name: Build and Deploy Backend
     runs-on: ubuntu-latest
     steps:
@@ -35,36 +35,18 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image for Backend
-        working-directory: task-api
         run: docker push leolr10/task-api:latest
 
-      - name: Set up Kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 --decode > $HOME/.kube/config
-          cat $HOME/.kube/config  # (Optional) For debugging, remove in production
-        env:
-          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
-
-      - name: Verify Kubeconfig
-        run: kubectl cluster-info
-        env:
-          KUBECONFIG: $HOME/.kube/config
-
-      - name: Deploy MongoDB to Kubernetes
-        run: kubectl apply -f task-api/kubernetes/mongodb.yaml --validate=false
-        env:
-          KUBECONFIG: $HOME/.kube/config
-
       - name: Deploy Backend to Kubernetes
-        run: kubectl apply -f task-api/kubernetes/app.yaml
+        run: |
+          kubectl apply -f task-api/kubernetes/mongodb.yaml
+          kubectl apply -f task-api/kubernetes/app.yaml
         env:
-          KUBECONFIG: $HOME/.kube/config
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
-  frontend-deploy:
+  frontend-build:
     name: Build and Deploy Frontend
     runs-on: ubuntu-latest
-    needs: backend-deploy
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -94,11 +76,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image for Frontend
-        working-directory: task-ui
         run: docker push leolr10/task-ui:latest
 
       # Optional: Deploy frontend to Kubernetes if desired
-      # - name: Deploy Frontend to Kubernetes
-      #   run: kubectl apply -f task-ui/kubernetes/app.yaml
-      #   env:
-      #     KUBECONFIG: $HOME/.kube/config
+      #- name: Deploy Frontend to Kubernetes
+      #  run: kubectl apply -f task-ui/kubernetes/app.yaml
+      #  env:
+      #    KUBECONFIG: ${{ secrets.KUBECONFIG }}
