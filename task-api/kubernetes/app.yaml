@@ -11,9 +11,6 @@ spec:
     metadata:
       labels:
         app: task-api
-      # Adding an annotation with a timestamp forces a new rollout if needed
-      annotations:
-        redeploy-timestamp: "{{ timestamp }}"
     spec:
       containers:
       - name: task-api
@@ -35,6 +32,6 @@ spec:
     app: task-api
   ports:
   - protocol: TCP
-    port: 8080
-    targetPort: 8080
-    nodePort: 30080
+    port: 8080         # Expose port 8080 on the service
+    targetPort: 8080   # Forward traffic to container port 8080
+    nodePort: 30080    # External port 30080
