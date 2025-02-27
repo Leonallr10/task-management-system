@@ -2,90 +2,92 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main] # Trigger the workflow when code is pushed to the 'main' branch
+    branches: [ main ]
   pull_request:
-    branches: [main] # Trigger the workflow when a pull request is made to the 'main' branch
+    branches: [ main ]
 
 jobs:
   backend-build:
     name: Build and Deploy Backend
-    runs-on: ubuntu-latest # Run this job on a Linux virtual machine
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3 # Download your repository's code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Set up Java 17
-        uses: actions/setup-java@v3 # Install Java 17
+        uses: actions/setup-java@v3
         with:
-          distribution: "temurin"
-          java-version: "17"
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Build Backend with Maven
-        working-directory: task-api # Navigate to the 'task-api' folder
-        run: mvn clean package # Build your Java backend using Maven
+        working-directory: task-api
+        run: mvn clean package
 
       - name: Build Docker Image for Backend
-        working-directory: task-api # Navigate to the 'task-api' folder
-        run: docker build -t leolr10/task-api:latest . # Build a Docker image
+        working-directory: task-api
+        run: docker build -t leolr10/task-api:latest .
 
       - name: Login to Docker Hub (Backend)
-        uses: docker/login-action@v2 # Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }} # Use your Docker Hub username from secrets
-          password: ${{ secrets.DOCKER_PASSWORD }} # Use your Docker Hub password from secrets
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image for Backend
-        run: docker push leolr10/task-api:latest # Push the Docker image to Docker Hub
+        run: docker push leolr10/task-api:latest
 
       - name: Set up KUBECONFIG
         run: |
-          mkdir -p $HOME/.kube # Create a folder for Kubernetes config
-          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config # Decode your Kubernetes config
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+          # Optional: If needed, override the API server hostname
+          # sed -i 's/kubernetes.docker.internal/your-public-api-endpoint/g' $HOME/.kube/config
 
       - name: Verify KUBECONFIG Setup (optional)
-        run: head -n 10 $HOME/.kube/config # Show the first few lines of your Kubernetes config (for debugging)
+        run: head -n 10 $HOME/.kube/config
 
       - name: Deploy Backend to Kubernetes
         run: |
-          kubectl apply -f task-api/kubernetes/mongodb.yaml --validate=false # Deploy MongoDB
-          kubectl apply -f task-api/kubernetes/app.yaml --validate=false # Deploy your backend app
+          kubectl apply -f task-api/kubernetes/mongodb.yaml --validate=false
+          kubectl apply -f task-api/kubernetes/app.yaml --validate=false
 
   frontend-build:
     name: Build and Deploy Frontend
-    runs-on: ubuntu-latest # Run this job on a Linux virtual machine
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3 # Download your repository's code
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3 # Install Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "18"
-          cache: "npm" # Cache npm dependencies
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install Frontend Dependencies
-        working-directory: task-ui # Navigate to the 'task-ui' folder
-        run: npm install # Install your frontend dependencies
+        working-directory: task-ui
+        run: npm install
 
       - name: Build Frontend
-        working-directory: task-ui # Navigate to the 'task-ui' folder
-        run: npm run build # Build your frontend
+        working-directory: task-ui
+        run: npm run build
 
       - name: Build Docker Image for Frontend
-        working-directory: task-ui # Navigate to the 'task-ui' folder
-        run: docker build -t leolr10/task-ui:latest . # Build a Docker image
+        working-directory: task-ui
+        run: docker build -t leolr10/task-ui:latest .
 
       - name: Login to Docker Hub (Frontend)
-        uses: docker/login-action@v2 # Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }} # Use your Docker Hub username from secrets
-          password: ${{ secrets.DOCKER_PASSWORD }} # Use your Docker Hub password from secrets
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image for Frontend
-        run: docker push leolr10/task-ui:latest # Push the Docker image to Docker Hub
+        run: docker push leolr10/task-ui:latest
 
-      # If you have Kubernetes manifests for frontend deployment, uncomment the lines below:
-      #- name: Deploy Frontend to Kubernetes
-      #  run: kubectl apply -f task-ui/kubernetes/app.yaml --validate=false
-      #  env:
-      #    KUBECONFIG: $HOME/.kube/config
+      # If you have a Kubernetes manifest for the frontend, you can deploy it:
+      # - name: Deploy Frontend to Kubernetes
+      #   run: kubectl apply -f task-ui/kubernetes/app.yaml --validate=false
+      #   env:
+      #     KUBECONFIG: $HOME/.kube/config
