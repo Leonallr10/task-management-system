@@ -1,0 +1,38 @@
+# General OS files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor folders
+.idea/
+.vscode/
+
+# Log files
+*.log
+
+# Maven target directory and backup files
+/target/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/pom.xml.next
+/release.properties
+
+# Java compiled files
+*.class
+
+# Gradle build files (if applicable)
+.gradle/
+build/
+
+# Node modules and build output for the frontend
+/task-ui/node_modules/
+/task-ui/dist/
+/task-ui/.vite/
+**/node_modules/
+
+# Environment variable files (optional, if not committed)
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
