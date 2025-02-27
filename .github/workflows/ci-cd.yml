@@ -41,8 +41,8 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
-          # Optional: If needed, override the API server hostname
-          # sed -i 's/kubernetes.docker.internal/your-public-api-endpoint/g' $HOME/.kube/config
+          # Optional workaround: Replace local Docker Desktop host with a resolvable endpoint:
+          sed -i 's/kubernetes.docker.internal/your-resolvable-hostname/g' $HOME/.kube/config
 
       - name: Verify KUBECONFIG Setup (optional)
         run: head -n 10 $HOME/.kube/config
@@ -86,7 +86,7 @@ jobs:
       - name: Push Docker Image for Frontend
         run: docker push leolr10/task-ui:latest
 
-      # If you have a Kubernetes manifest for the frontend, you can deploy it:
+      # Optional: Deploy frontend if you have a manifest
       # - name: Deploy Frontend to Kubernetes
       #   run: kubectl apply -f task-ui/kubernetes/app.yaml --validate=false
       #   env:
