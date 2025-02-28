@@ -231,6 +231,8 @@ Below are some sample test cases you can use with Postman to verify the API:
 ![Image](https://github.com/user-attachments/assets/31d24549-b11c-4491-9e36-6fa81d0f4a98)
 ## DELETE: http://localhost:30080/tasks/123
 ![Image](https://github.com/user-attachments/assets/d3de9252-be5a-4dfd-b6f9-72da3a06edc9)
+## Demo application with proper working of front-end and back-end 
+[![Watch the video](https://via.placeholder.com/640x360.png?text=Video+Preview)](https://drive.google.com/file/d/14kxgsIRF9hSSRtFjme-xBytXQgfheZc5/view?usp=sharing)
 
 
 ## Additional Resources
