@@ -46,11 +46,13 @@ jobs:
         run: docker push leolr10/task-api:latest
 
       # Set up KUBECONFIG for Kubernetes deployment
-      - name: Set up KUBECONFIG
+      - name: Set up Kubeconfig
         run: |
-          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+      - name: Verify Context
+        run: kubectl config current-context
+      - name: Get Cluster Info
+        run: kubectl cluster-info
 
       # Verify the Kubernetes connection (optional debugging step)
       - name: Verify KUBECONFIG Setup
