@@ -9,7 +9,7 @@ on:
 jobs:
   backend-build:
     name: Build and Deploy Backend
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -37,25 +37,38 @@ jobs:
       - name: Push Docker Image for Backend
         run: docker push leolr10/task-api:latest
 
+      - name: Set up KUBECONFIG
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config  # Ensure correct permissions
+      
+            - name: Verify KUBECONFIG Setup
+              run: |
+                echo "Current context:"
+                kubectl config current-context
+                echo "Cluster info:"
+                kubectl cluster-info
+                echo "Nodes:"
+                kubectl get nodes || echo "Failed to connect to cluster"
+
       - name: Deploy Backend to Kubernetes
         run: |
-          kubectl apply -f task-api/kubernetes/mongodb.yaml
-          kubectl apply -f task-api/kubernetes/app.yaml
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
-
-  frontend-build:
-    name: Build and Deploy Frontend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+          kubectl apply -f task-api/kubernetes/mongodb.yaml --validate=false
+          kubectl apply -f task-api/kubernetes/app.yaml --validate=false
+        
+          frontend-build:
+            name: Build and Deploy Frontend
+            runs-on: ubuntu-latest
+            steps:
+              - name: Checkout Code
+                uses: actions/checkout@v3
+        
+              - name: Set up Node.js
+                uses: actions/setup-node@v3
+                with:
+                  node-version: '18'
+                  cache: 'npm'
 
       - name: Install Frontend Dependencies
         working-directory: task-ui
