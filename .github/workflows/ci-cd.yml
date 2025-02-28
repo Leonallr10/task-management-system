@@ -11,7 +11,7 @@ jobs:
   # Backend Job: Build, containerize, and deploy the Spring Boot application
   backend-build:
     name: Build and Deploy Backend
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       # Checkout the repository code
       - name: Checkout Code
@@ -84,7 +84,7 @@ jobs:
   # Frontend Job: Build, containerize, and optionally deploy the Node.js application
   frontend-build:
     name: Build and Deploy Frontend
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       # Checkout the repository code
       - name: Checkout Code
