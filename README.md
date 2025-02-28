@@ -159,6 +159,9 @@ kaiburr/
   ```bash
   kubectl apply -f mongodb.yaml --validate=false
   kubectl apply -f app.yaml
+  kubectl get pods
+  kubectl get svc
+
   ```
 - **Service Exposure:**  
   The backend is exposed via a NodePort at **30080**, routing traffic to container port **8080**.
@@ -218,6 +221,17 @@ Below are some sample test cases you can use with Postman to verify the API:
    Should remove the task and return a confirmation message.
 
 ---
+## image for docker image :
+![Image](https://github.com/user-attachments/assets/802ca390-4ed6-4465-91ca-ca98fe4e3aa4)
+## GET : http://localhost:30080/tasks?id=123
+![Image](https://github.com/user-attachments/assets/25a8179f-10ce-4c0a-9385-938fce998d77)
+## PUT: http://localhost:30080/tasks
+![Image](https://github.com/user-attachments/assets/883afbb0-4267-45a5-ad35-6f37ff5487c5)
+## GET: http://localhost:30080/tasks?id=123
+![Image](https://github.com/user-attachments/assets/31d24549-b11c-4491-9e36-6fa81d0f4a98)
+## DELETE: http://localhost:30080/tasks/123
+![Image](https://github.com/user-attachments/assets/d3de9252-be5a-4dfd-b6f9-72da3a06edc9)
+
 
 ## Additional Resources
 
