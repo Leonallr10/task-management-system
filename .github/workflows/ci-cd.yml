@@ -11,7 +11,7 @@ jobs:
   # Backend Job: Build, containerize, and deploy the Spring Boot application
   backend-build:
     name: Build and Deploy Backend
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       # Checkout the repository code
       - name: Checkout Code
@@ -48,21 +48,8 @@ jobs:
       # Set up KUBECONFIG for Kubernetes deployment
       - name: Set up KUBECONFIG
         run: |
-          # Check if the secret is empty
-          if [ -z "${{ secrets.KUBECONFIG_B64 }}" ]; then
-            echo "Error: KUBECONFIG_B64 secret is empty"
-            exit 1
-          fi
-          # Create the directory
           mkdir -p $HOME/.kube
-          # Write the decoded config
           echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
-          # Verify the file was created
-          if [ ! -f $HOME/.kube/config ]; then
-            echo "Error: Failed to create $HOME/.kube/config"
-            exit 1
-          fi
-          # Set permissions
           chmod 600 $HOME/.kube/config
 
       # Verify the Kubernetes connection (optional debugging step)
@@ -84,7 +71,7 @@ jobs:
   # Frontend Job: Build, containerize, and optionally deploy the Node.js application
   frontend-build:
     name: Build and Deploy Frontend
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       # Checkout the repository code
       - name: Checkout Code
