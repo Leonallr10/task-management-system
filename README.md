@@ -1,4 +1,4 @@
-# Kaiburr Java Backend - REST API with React Frontend
+# Java Backend - REST API with React Frontend
 
 This project provides a full-stack application with a Spring Boot backend and a React/TypeScript frontend. The backend exposes a REST API to create, fetch, update, execute, and delete "task" objects that represent shell commands. Data is stored in MongoDB, and tasks can be executed inside Kubernetes pods. The CI/CD pipeline (using GitHub Actions and KIND) automates the build, test, and deployment processes.
 
